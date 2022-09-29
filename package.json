@@ -1,12 +1,8 @@
 {
-  "dependencies": {
-    "bcryptjs": "^2.4.3"
-  },
-  "name": "api-project",
-  "description": "## Database Schema Design",
+  "name": "authenticate-me",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "devDependencies": {},
     "scripts": {
       "install": "npm --prefix backend install backend",
       "dev:backend": "npm install --prefix backend start",
@@ -14,15 +10,10 @@
       "sequelize-cli": "npm run --prefix backend sequelize-cli",
       "start": "npm start --prefix backend"
     },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gacampbe46/API-project.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gacampbe46/API-project/issues"
-  },
-  "homepage": "https://github.com/gacampbe46/API-project#readme"
+  "dependencies": {
+    "pg": "^8.8.0"
+  }
 }
