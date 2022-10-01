@@ -44,18 +44,38 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       // define association here
-      User.hasMany(models.Reviews)
+      User.belongsToMany(models.Spot, {
+        through: 'Review',
+        foreignKey: 'userId',
+        otherKey: 'spotId'
+      })
+      User.belongsToMany(models.Spot, {
+        through: 'Booking',
+        foreignKey: 'userId',
+        otherKey: 'spotId'
+      })
+      User.hasMany(models.Spot, { foreignKey: 'ownerId' })
+      User.hasMany(models.Reviews, { foreignKey: 'userId' })
+      User.hasMany(models.Bookings, { foreignKey: 'userId' })
     }
   };
 
   User.init(
     {
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           len: [4, 30],
-          isNotEmail(value) {
+          checkForEmail(value) {
             if (Validator.isEmail(value)) {
               throw new Error("Cannot be an email.");
             }
@@ -73,9 +93,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING.BINARY,
         allowNull: false,
         validate: {
-          len: [60, 60]
+          len: [0, 100]
         }
-      }
+      },
     },
     {
       sequelize,

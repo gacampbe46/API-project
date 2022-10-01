@@ -1,7 +1,7 @@
 // backend/routes/api/session.js
 const express = require('express');
 
-const { setTokenCookie, restoreUser } = require('../../utils/auth');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.post(
     async (req, res, next) => {
         const { credential, password } = req.body;
 
-        const user = await User.login({ credential, password });
+        const user = await User.findOne({ where: { email: credential, hashedPassword: password } });
 
         if (!user) {
             const err = new Error('Login failed');
@@ -40,10 +40,17 @@ router.post(
             return next(err);
         }
 
-        await setTokenCookie(res, user);
+        const token = await setTokenCookie(res, user);
+
+        const {id, firstName, lastName, username } = user
 
         return res.json({
-            user
+            id,
+            firstName,
+            lastName,
+            email: credential,
+            username,
+            token
         });
     }
 );
@@ -60,14 +67,17 @@ router.delete(
 // Restore session user
 router.get(
     '/',
-    restoreUser,
-    (req, res) => {
-        const { user } = req;
-        if (user) {
-            return res.json({
-                user: user.toSafeObject()
-            });
-        } else return res.json({});
+    requireAuth,
+    (req, res, next) => {
+        const { id, firstName, lastName, email, username } = req.user;
+
+        return res.json({
+            id,
+            firstName,
+            lastName,
+            email,
+            username
+        })
     }
 );
 
