@@ -62,4 +62,12 @@ const requireAuth = function (req, _res, next) {
     return next(err);
 }
 
+const requirePerm = function(req, res, next){
+    res.status(403)
+    return res.json({
+        message: "Forbidden",
+        statusCode: 403
+    })
+}
+
 module.exports = { setTokenCookie, restoreUser, requireAuth };
