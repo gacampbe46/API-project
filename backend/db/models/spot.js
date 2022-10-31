@@ -10,71 +10,45 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // define association here
+      Spot.hasMany(models.SpotImage, { foreignKey: 'spotId' })
+      Spot.hasMany(models.Review, { foreignKey: 'spotId' })
+      Spot.hasMany(models.Booking, { foreignKey: 'spotId' })
+      Spot.belongsTo(models.User, { foreignKey: 'ownerId' })
       Spot.belongsToMany(models.User, {
-        through: 'Bookings',
+        through: 'Review',
+        as: "Owner",
         foreignKey: 'spotId',
         otherKey: 'userId'
-      });
+      })
       Spot.belongsToMany(models.User, {
-        through: 'Reviews',
-        as: 'Owner',
+        through: 'Booking',
         foreignKey: 'spotId',
         otherKey: 'userId'
-      });
-      Spot.hasMany(models.Reviews, { foreignKey: 'spotId' });
-      Spot.belongsTo(models.User, { foreignKey: "ownerId" });
-      Spot.hasMany(models.SpotImages, { foreignKey: "spotId" });
+      })
     }
   }
   Spot.init({
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
-    ownerId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    city: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    state: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    country: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lat: {
-      type: DataTypes.DECIMAL,
-    },
-    lng: {
-      type: DataTypes.DECIMAL,
-    },
+    ownerId: DataTypes.INTEGER,
+    address: DataTypes.STRING,
+    city: DataTypes.STRING,
+    state: DataTypes.STRING,
+    country: DataTypes.STRING,
+    lat: DataTypes.DECIMAL,
+    lng: DataTypes.DECIMAL,
     name: {
       type: DataTypes.STRING,
       validate: {
-        len: [5, 1000]
+        len: [10, 1000]
       }
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: {
-        len: [5, 1000]
+        len: [10,1000]
       }
     },
-    price: {
-      type: DataTypes.DECIMAL,
-    },
+    price: DataTypes.DECIMAL
   }, {
     sequelize,
     modelName: 'Spot',
